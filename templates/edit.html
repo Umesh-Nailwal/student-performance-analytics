@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Editing Result: {{ record.roll }} - Semester {{ record.semester }}</h2>
+<div class="form-container">
+<form method="POST" >
+
+  <label>Marks:</label>
+  <input type="number" name="marks" min="0"  value="{{ record.marks }}" required>
+  <br><br>
+
+  <label>Attendance:</label>
+  <input type="number" name="attendance" min="0" max="100" value="{{ record.attendance }}" required>
+  <br><br>
+
+  <button type="submit" class="btn-submit">Update Result</button>
+
+</form>
+</div>
+
+{% endblock %} 

@@ -1,0 +1,57 @@
+    {% extends "base.html" %}
+{% block content %}
+<div class="info-cards">
+    <div>
+        <h2>Add Academic Result</h2><br>
+        <p>Record marks and attendance of a specific semester for students </p>
+    </div>
+</div>
+<div class="form-container">
+<h2><i style="color: var(--color-primary)" data-lucide="file-plus"></i>Add Student Result </h2><br>
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    <div class="flash-wrap">
+      {% for category, msg in messages %}
+        <div class="flash flash-{{ category }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+    
+<form method="POST" action="{{ url_for('results.add_result') }}">
+  <div class="form-group">
+    <select name="student" required>
+        <option value="">Select Student</option>
+        {% for s in students %}
+            <option value="{{ s['roll'] }}|{{  s['branch']  }}">
+                {{ s['roll'] }} - {{ s['name'] }} ({{  s['branch']  }})
+            </option>
+        {% endfor %}
+    </select>
+  </div><br>
+  <div class="form-group">
+    <select name="semester" required>
+        <option value="">Select Semester</option>
+        <option value="1">Semester 1</option>
+        <option value="2">Semester 2</option>
+        <option value="3">Semester 3</option>
+        <option value="4">Semester 4</option>
+        <option value="5">Semester 5</option>
+        <option value="6">Semester 6</option>
+    </select>
+  </div><br>
+  <div class="form-group">
+  <label>Enter Marks:</label>
+    <input type="number" step="0.01"  name="marks" placeholder="Marks (%)" required><br><br>
+  </div>
+  <div class="form-group">
+  <label>Enter Attendance:</label>
+    <input type="number" step="0.01" name="attendance" placeholder="Attendance (%)" required><br><br>
+    <div class="form-group"></div>
+    <button type="submit" class="btn"><i data-lucide="file-plus"></i>Save Result</button>
+</form>
+    <script>
+  setTimeout(() => document.querySelector('.flash-wrap')?.remove(), 2500);
+</script
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="info-cards redirect">
+            <span class="redirect">
+    <a href="{{ url_for('students.students')  }}"><-- Back to the directory</a><br>
+    </span>     
+    </div>
+<div class="info-cards">
+        <div>
+        <h2>Semester Result</h2><br>
+        <p>Semester Result for the Students</p>
+        </div>
+</div>
+<form method="GET" action="{{ url_for('filtered.semester_results') }}" class="top-controls">
+
+    <!-- SEARCH -->
+    <div class="search-wrapper">
+        <div class="search-input">
+            <input type="text" name="search"
+                   placeholder="Search student..."
+                   value="{{ request.args.get('search','') }}">
+            <i data-lucide="search" class="search-icon"></i>
+        </div>
+    </div>
+
+    <!-- ADMISSION YEAR -->
+    <div class="filter-wrapper">
+        <select name="year">
+            {% for y in years %}
+        <option value="{{ y.admission_year }}"
+            {% if request.args.get('year') == y.admission_year|string %}selected{% endif %}>
+            {{ y.admission_year }}
+        </option>
+        {% endfor %}
+    </select>
+        </select>
+    </div>
+
+    <!-- BRANCH -->
+    <div class="filter-wrapper">
+        <select name="branch">
+            <option value="">Branch</option>
+            <option value="AIML">AIML</option>
+            <option value="Civil">Civil</option>
+            <option value="Mechanical">Mechanical</option>
+        </select>
+    </div>
+
+    <!-- VIEW TYPE -->
+    <div class="filter-wrapper">
+        <select name="semester">
+           <option value="">All Sem</option>
+        {% for i in range(1,7) %}
+        <option value="{{ i }}"
+            {% if request.args.get('semester') == i|string %}selected{% endif %}>
+            Sem {{ i }}
+        </option>
+        {% endfor %}
+    </select>
+        
+    </div>
+    <div class="filter-wrapper">
+             <select name="sort" onchange="this.form.submit()">
+            <option value="">Sort by Percentage</option>
+            <option value="desc">High to Low</option>
+            <option value="asc">Low to High</option>
+            <option value="roll">Sort by Roll number</option>
+        </select>
+    </div>
+    <!-- SUBMIT -->
+    <button type="submit" class="btn">Apply</button>
+
+<br>
+
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>Roll</th>
+            <th>Semester</th>
+            <th>Percentage</th>
+            <th>Grade</th>
+            <th>Performance</th>
+            <th>Risk</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for r in results %}
+        <tr>
+            <td>{{ r.roll }}</td>
+            <td>{{ r.semester }}</td>
+            <td>{{ r.percentage }}%</td>
+            <td>{{ r.grade }}</td>
+            <td><span class="badge {{ r.performance|lower }}">{{ r.performance }}</span></td>
+            <td><span class="badge {{ r.risk|lower }}">{{ r.risk }}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="info-cards">
+            <div>
+                        <h2>System Configuration</h2><br>
+                        <p>Configure evaluation parameters for different branches and semesters</p>
+            </div>
+</div>
+
+<div class="form-container">
+  <h2><i style="color: var(--color-primary)"data-lucide="settings"></i>Add/Update Rules</h2><br>
+  <form action="/admin-panel" method="POST">
+              
+    <div class="form-group">
+                <select name="branch" required>
+                <option value="" disabled selected > Select branch</option>
+                <option value="AIML">AIML</option>
+                <option value="Civil">Civil</option>
+                <option value="Machenical">Machenical</option>
+                </select>
+        </div>
+      <div class="form-group">
+    <select name="semester" required>
+        <option value="">Select Semester</option>
+        <option value="1">Semester 1</option>
+        <option value="2">Semester 2</option>
+        <option value="3">Semester 3</option>
+        <option value="4">Semester 4</option>
+        <option value="5">Semester 5</option>
+        <option value="6">Semester 6</option>
+    </select>
+  </div>
+    <div class="form-group">
+      <label>Total Marks for Semester</label>
+      <input type="number" name="total_marks" min="0" required placeholder="All subjects combined marks">
+    </div>
+    <button type="submit" class="btn" ><i data-lucide="settings"></i>
+                Save configuration</button>
+  </form>
+</div>
+
+<div class="table-container">
+<table>
+            <thead>
+            <th>Branch</th>
+            <th>Semester</th>
+            <th>TotalMarksLimit</th>
+            <th>Action</th>
+            </thead>
+           {% if configs %}
+    <tbody>
+        {% for row in configs %}
+        <tr>
+            <td>{{ row.branch }}</td>
+            <td>{{ row.semester }}</td>
+            <td>{{ row.total_marks }}</td>
+            <td>
+             <a href="{{ url_for('admin_panel.delete_config', branch=row.branch, semester=row.semester) }}"
+           class="btn btn-danger"
+           onclick="return confirm('Are you sure?')">
+           Delete
+        </a>
+            </td>  
+        </tr>
+        {% endfor %}
+    </tbody>
+    {% else %}
+    <tbody>
+        <tr>
+            <td colspan="3" style="text-align:center;">
+                No configuration found. Add one above.
+            </td>
+        </tr>
+    </tbody>
+    {% endif %}
+ 
+</table>
+     
+</div>
+{% endblock %}

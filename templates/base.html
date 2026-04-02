@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Student Performance System{% endblock %}</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    
+<div class="layout">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+
+        <h3 class="logo">
+            <i data-lucide="graduation-cap"></i>
+            EDU Predict
+        </h3><hr>
+
+        <nav id="side-menu">
+
+            <a href="{{ url_for('dashboard.home') }}"
+               class="nav-link {% if request.endpoint and request.endpoint.startswith('dashboard.home') %}active{% endif %}">
+                <i data-lucide="layout-dashboard"></i>
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('students.students') }}"
+               class="nav-link {% if request.endpoint and request.endpoint.startswith('students.students') %}active{% endif %}">
+                <i data-lucide="users"></i>
+                Students
+            </a>
+
+            <a href="{{ url_for('students.add_student') }}"
+               class="nav-link {% if request.endpoint and request.endpoint.startswith('students.add_student') %}active{% endif %}">
+                <i data-lucide="user-plus"></i>
+                Add Student
+            </a>
+
+            <a href="{{ url_for('results.add_result') }}"
+               class="nav-link {% if request.endpoint and request.endpoint.startswith('results.add_result') %}active{% endif %}">
+                <i data-lucide="file-plus"></i>
+                Add Result
+            </a>
+            <a href="{{ url_for('admin_panel.admin_panel') }}"
+               class="nav-link {% if request.endpoint and request.endpoint.startswith('admin_panel.admin_panel') %}active{% endif %}">
+                <i data-lucide="settings"></i>
+                Admin config
+            </a>
+
+            <a href="{{ url_for('auth.logout') }}" class="nav-link logout">
+                <i data-lucide="log-out"></i>
+                Logout
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- ================= MAIN ================= -->
+    <section class="main-wrapper">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="mobile-topbar">
+            <button aria-label="Open menu" id="mobile-menu" class="hamburger-btn" >
+                <span>☰</span>
+            </button>
+            </div>
+            <h4 class="page-title"></h4>
+
+            <div class="topbar-right">
+
+                <!-- Notification -->
+                <div class="notification">
+                    <i data-lucide="bell"></i>
+                    <span class="badge-notify">3</span>
+                </div>
+
+                <!-- Admin Profile -->
+                <div class="admin-profile">
+                    <img src="{{ url_for('static', filename='admin.jpg') }}" alt="Admin">
+                    <span>{{ username }}</span>
+                </div>
+
+            </div>
+
+        </header><hr>
+
+        <!-- CONTENT -->
+        <main class="content-wrapper">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert {{ category }}">
+                      {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+
+        </main>
+
+    </section>
+
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

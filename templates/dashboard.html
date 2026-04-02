@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="info-cards">
+    <div>
+<h2>Dashboard</h2><br>
+<p>Overview of student performance metrics</p>
+    </div>      
+    </div>
+
+<div class="cards">
+    <div class="card card-blue">
+        <div class="card-icon blue">
+            <i data-lucide="users"></i>
+        </div>
+        <div>
+            <h6>Total Students</h6>
+            <h2>{{ total }}</h2>
+        </div>
+    </div>
+
+    <div class="card card-green">
+        <div class="card-icon green">
+            <i data-lucide="bar-chart-3"></i>
+        </div>
+        <div>
+            <h6>Average Percentage</h6>
+            <h2>{{ avg_pct }}%</h2>
+        </div>
+    </div>
+
+    <div class="card card-red">
+        <div class="card-icon red">
+            <i data-lucide="alert-triangle"></i>
+        </div>
+        <div>
+            <h6>At Risk Students</h6>
+            <h2>{{ high_risk_count  }}</h2>
+        </div>
+    </div>
+
+    <div class="card card-purple">
+        <div class="card-icon purple">
+            <i data-lucide="calendar-days"></i>
+        </div>
+        <div>
+            <h6>Attendance Rate</h6>
+            <h2>{{ avg_att }}%</h2>
+        </div>
+    </div>
+</div>
+        <br><br>
+ 
+
+<!-- STUDENT LIST SECTION -->
+<div class="student-section">
+
+    <div class="side-card">
+        <h5>🏆 Top Performing Students</h5>
+        
+
+        <ul class="student-list">
+            {% for s in top_students %}
+            <li>
+                <span>{{ s.name }}-</span>
+                <span class="score">{{ s.best }}%</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+    <div class="side-card">
+        <h5>⚠️ Students at Risk</h5>
+        
+
+        <ul class="student-list">
+            {% for s in weak_students %}
+            <li>
+                <span>{{ s.name }}-</span>
+                <span class="score">{{ s.best }}%</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="chart-card full-chart">
+    <h3>Semester Performance Trend</h3>
+    <canvas id="semesterChart"></canvas>
+</div>
+</div>
+
+<script>
+const ctx = document.getElementById('semesterChart').getContext('2d');
+
+const gradient = ctx.createLinearGradient(0,0,0,400);
+gradient.addColorStop(0,"rgba(34,197,94,0.4)");
+gradient.addColorStop(1,"rgba(34,197,94,0)");
+
+new Chart(ctx,{
+    type:'line',
+    data:{
+        labels: {{ semesters | tojson }},
+        datasets:[{
+            label:'Average Performance',
+            data: {{ averages | tojson }},
+            borderColor:'#22c55e',
+            backgroundColor: gradient,
+            fill:true,
+            tension:0.4,
+            pointBackgroundColor:'#22c55e',
+            pointRadius:5,
+            borderWidth:3
+        }]
+    },
+
+    
+
+    options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        layout:{
+        padding:{
+            top:20,
+            right:10,
+            left:10,
+            bottom:10
+        }
+        },
+
+plugins:{
+    legend:{
+        display:false
+    },
+    tooltip:{
+        enabled:true
+    }
+},
+        scales:{
+            y:{
+                beginAtZero:true,
+                max:100,
+                ticks:{
+                    callback:function(value){
+                        return value + "%";
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+    
+
+    
+
+
+{% endblock %}

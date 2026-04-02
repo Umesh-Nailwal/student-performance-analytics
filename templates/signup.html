@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+  
+  body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .signin-box {
+            width: 500px;
+            padding: 40px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .signin-box h2 {
+            margin-bottom: 20px;
+            color: #059669;
+        }
+
+        .signin-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .signin-box input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+        }
+
+        .signin-btn {
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .login-btn:hover {
+            background: #059669;
+        }
+    input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: var(--space-md);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+    outline: none;
+}
+</style>
+
+</head>
+<body><div class="signin-box">
+    <h2>Create Account</h2>{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <div class="flash">{{ message }}</div>
+    {% endfor %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('auth.signup') }}">
+    <div class="input-box">
+        <input type="text" name="username" placeholder="Username" required>
+    </div>
+
+    <div class="input-box">
+        <input type="password" name="password" placeholder="Password" required>
+    </div>
+
+    <button class="signin-btn" type="submit">Sign Up</button>
+</form>
+
+<div class="signin-link">
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+</div>
+
+</div></body>
+</html>

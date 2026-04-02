@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="info-cards">
+    <div>
+    <h2>Add New Student</h2><br>
+    <p>Register a new student into the system</p>
+    </div>  
+    </div>
+    <div class="form-container">
+        <h2><i style="color: var(--color-primary)" data-lucide="user-plus"></i>Add New Student</h2><br>
+        <!------ Flash fieds ---------->
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                 {% if messages %}
+                  <div class="flash-wrap">
+                       {% for category, msg in messages %}
+                     <div class="flash flash-{{ category }}">{{ msg }}</div>
+                       {% endfor %}
+                  </div>
+                  {% endif %}
+             {% endwith %}
+            <!-------------- Students for adding student------------>
+        <form id="addstudent_form" action="/add_student" method="POST">
+            <div class="form-group">
+                <label>Roll No</label>
+                <input type="number" step="1" min="1" name="roll"  id="roll_no" placeholder="Enter Roll Number" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input id="fullname" type="text" name="name" placeholder="Enter Student Name" required>
+            </div>
+            
+            <div class="form-group">
+                <select name="branch" required>
+                <option value="" disabled selected > Select branch</option>
+                <option value="AIML">AIML</option>
+                <option value="Civil">Civil</option>
+                <option value="Machenical">Machenical</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Admission year</label>
+                <input type="number"  id="admission_year" name="admission_year" placeholder="e.g. 2026" min="2009" required>
+            </div>
+            
+            <button type="submit" class="btn"><i data-lucide="user-plus"></i>Add Student</button>
+        </form>
+        <script>
+  setTimeout(() => document.querySelector('.flash-wrap')?.remove(), 2500);
+</script
+    </div>
+
+{% endblock %}

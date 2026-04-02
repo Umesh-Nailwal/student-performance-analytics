@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="info-cards "> 
+    <span class="redirect">
+        <a href="{{ url_for('students.students')  }}"><-- Back to the directory</a>
+        </span>
+  </div>
+<!-- ================= STUDENT HEADER ================= -->
+<div class="detail-card">
+    <div class="student-header">
+        <!--=======Profile image=================-->
+        <div class="std-img">    
+            {{ student.name[0]|upper  }}
+        </div>
+        <!-- ==========Student details===========--> 
+        <div class="student-info">
+            <h2 class="student-name">{{ student.name}}</h2>
+            <div class="data-items">
+                <div class="data-item">
+                    <i data-lucide="book-open"></i>
+                    <span>{{ student.roll }}</span>
+                </div>
+                <div class="data-item">
+                    <i data-lucide="graduation-cap"></i>
+                    <span>{{ student.branch  }}</span>
+                </div>
+                <div class="data-item">
+                    <i data-lucide="calendar"></i>
+                    <span>{{ student.admission_year }}</span>
+                </div>
+            </div>
+        </div>
+            <!-- =========== Student Average precentage==========-->
+            <div class="average-sem">
+                <p>Overall Average</p>
+                <span style="font-size: 28px; font-weight: 600;color: black;"><i data-lucide="lucide lucide-award-gold"></i>{{ avg_pct  }}%</span>
+                <p>Across {{ total_sem  }} semester </p>
+            </div>
+</div>
+  <!--================= Risk /Performance insight button ========= -->
+        <div>
+         <button id="riskBtn" class="btn-submit" onclick="toggleRisk()">
+            🔍 Show Risk Insights
+        </button>
+        </div>
+</div>
+
+<!-- ================= RISK INSIGHT PANEL ================= -->
+<div id="riskSection" class="risk-card" style="display:none;">
+    <h4>📊 Predictive Risk Analysis</h4>
+
+    {% for insight in insights %}
+        <p>• {{ insight }}</p>
+    {% endfor %}
+    <br>
+    <h5>Final Risk Level:
+        <span class="badge {{ final_risk|lower }}">
+            {{ final_risk }}
+        </span>
+    </h5>
+</div>
+<!-- ================= CHART ================= -->
+<div class="chart-card">
+    <h4>📈 Performance Trend</h4>
+    <canvas id="performanceChart"></canvas>
+</div>
+
+<br>
+
+<!-- ================= TABLE ================= -->
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>Sem</th>
+            <th>%</th>
+            <th>Attendance</th>
+            <th>Grade</th>
+            <th>Performance</th>
+            <th>Risk</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for r in results %}
+        <tr>
+            <td>{{ r.semester }}</td>
+            <td>{{ r.percentage }}%</td>
+            <td>{{ r.attendance }}%</td>
+            <td>{{ r.grade }}</td>
+            <td>
+                <span class="badge {{ r.performance|lower }}">
+                    {{ r.performance }}
+                </span>
+            </td>
+            <td>
+                <span class="badge {{ r.risk|lower }}">
+                    {{ r.risk }}
+                </span>
+            </td>
+            <td class="action-buttons">
+                <a href="{{ url_for('modify.update_result', roll=r.roll, semester=r.semester) }}" class="edit-btn">✏️</a>
+                <a href="{{ url_for('modify.delete_result', roll=r.roll, semester=r.semester) }}" 
+                   onclick="return confirm('Delete this semester record?');"
+                   class="delete-btn">🗑️</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<!-- ================= CHART SCRIPT ================= -->
+<script>
+new Chart(document.getElementById("performanceChart"), {
+    type: "line",
+    data: {
+        labels: [{% for r in results %}"Sem {{ r.semester }}",{% endfor %}],
+        datasets: [{
+            label: "Percentage",
+            data: [{% for r in results %}{{ r.percentage }},{% endfor %}],
+            borderColor: "#10b981",
+            backgroundColor: "rgba(16,185,129,0.15)",
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: "#059669"
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                min: 0,
+                max: 100
+            }
+        }
+    }
+});
+
+
+function toggleRisk() {
+    const section = document.getElementById("riskSection");
+    const btn = document.getElementById("riskBtn");
+
+    if (section.style.display === "none") {
+        section.style.display = "block";
+        btn.innerHTML = "❌ Hide Risk Insights";
+    } else {
+        section.style.display = "none";
+        btn.innerHTML = "🔍 Show Risk Insights";
+    }
+}
+
+</script>
+
+{% endblock %}
