@@ -81,7 +81,7 @@
             <th>Action</th>
         </tr>
     </thead>
-
+    {% if results %}
     <tbody>
         {% for r in results %}
         <tr>
@@ -108,6 +108,15 @@
         </tr>
         {% endfor %}
     </tbody>
+    {% else %}
+    <tbody>
+         <tr>
+            <td colspan="3" style="text-align:center;">
+                No Semester Record found.
+            </td>
+        </tr>
+    </tbody>
+    {% endif %}
 </table>
 </div>
 

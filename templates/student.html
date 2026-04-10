@@ -78,7 +78,7 @@
             <th class="text-center"><i data-lucide="eye"></i> View</th>
         </tr>
     </thead>
-
+ {% if students %}
     <tbody>
         {% for student in students %}
         <tr>
@@ -93,7 +93,16 @@
                 </a>
             </td>
         </tr>
-        {% endfor %}
+       {% endfor %}
+         {% else %}
+    <tbody>
+        <tr>
+            <td colspan="3" style="text-align:center;">
+                No Student Record found. Add one above.
+            </td>
+        </tr>
+    </tbody>
+    {% endif %}
     </tbody>
 </table>
 </div>
