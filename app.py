@@ -8,9 +8,10 @@ from routes.admin_panel import admin_panel_bp
 from routes.student_details import student_details_bp
 from routes.filtered_list import filtered_list_bp
 from routes.modify import modify_bp
-
+import os
+from services.utility import get_db
 app = Flask(__name__)
-app.secret_key = "super_secret_key_123"
+app.secret_key = os.environ.get("SECRET_KEY", "fallback_key")
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
@@ -21,6 +22,7 @@ app.register_blueprint(admin_panel_bp)
 app.register_blueprint(student_details_bp)
 app.register_blueprint(filtered_list_bp)
 # ---------------- RUN ----------------
+init_db()
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -2,7 +2,7 @@ from flask import (
     Blueprint, render_template,
     request, session
 )
-from services.utility import get_db
+from services.utility import get_db,get_username
 from services.auth_login import login_required
 
 filtered_list_bp = Blueprint("filtered", __name__)
@@ -71,10 +71,11 @@ def semester_results():
     """, (user_id,)).fetchall()
 
     conn.close()
-
+    username=get_username()
     return render_template(
         "semester_results.html",
         results=results,
         years=years,
-        branches=branches
+        branches=branches,
+        username=username
     )

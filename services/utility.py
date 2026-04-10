@@ -1,3 +1,4 @@
+
 import sqlite3
 from flask import session
 import os
@@ -73,3 +74,6 @@ def calculate_all(marks, attendance, branch=None, semester=None):
         risk = "Low"
 
     return percentage, grade, performance, risk
+def get_username():
+	user=session.get("username","Guest")
+	return user

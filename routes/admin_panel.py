@@ -1,10 +1,11 @@
 from flask import (
 Blueprint, render_template,
-flash,request,session, redirect, url_for
+flash,request,session, redirect, url_for, current_app, session
 )
-from services.utility import get_config_db
+from services.utility import get_config_db, get_db, get_username
 from services.auth_login import login_required
- 
+import os
+import csv
 admin_panel_bp =Blueprint("admin_panel",__name__)
 
 @admin_panel_bp.route("/admin-panel", methods=["GET", "POST"])
@@ -27,9 +28,10 @@ def admin_panel():
         flash("Saved!", "success")
     configs = conn.execute("SELECT * FROM config WHERE user_id=?", (session["user_id"],)).fetchall()
     conn.close()
+    username=get_username()
 
 
-    return render_template("admin_pannel.html", configs=configs)
+    return render_template("admin_pannel.html", configs=configs,username=username)
 
 @admin_panel_bp.route("/delete-config/<branch>/<int:semester>")
 @login_required

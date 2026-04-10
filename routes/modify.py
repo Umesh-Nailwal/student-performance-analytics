@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template  ,request, redirect, session, flash, url_for
-from services.utility import get_db, calculate_all
+from services.utility import get_db, calculate_all,get_username
 from services.auth_login import login_required
 
 modify_bp=Blueprint("modify",__name__)
@@ -57,5 +57,6 @@ def delete_result(roll, semester):
     conn.close()
 
     flash("Record deleted successfully!", "success")
-    return redirect(url_for("student_detail", roll=roll))
+    username=get_username()
+    return redirect(url_for("adv.student_detail", roll=roll))
     

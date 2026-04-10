@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template 
-from services.utility import get_db
+from services.utility import get_db,get_username
 from services.auth_login import login_required
 
 student_details_bp=Blueprint("adv",__name__)
@@ -87,6 +87,7 @@ def student_detail(roll):
 
     else:
         final_risk = "Low"
+    username=get_username()
 
     return render_template(
         "student_detail.html",
@@ -95,5 +96,6 @@ def student_detail(roll):
         insights=insights,
         final_risk=final_risk,
         avg_pct=avg_pct,
-        total_sem=total_sem
+        total_sem=total_sem,
+        username=username
     )

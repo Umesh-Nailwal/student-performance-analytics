@@ -20,7 +20,7 @@ def create_tables():
             branch TEXT,
             admission_year INTEGER,
             user_id INTEGER,
-            PRIMARY KEY (roll, branch,user_id)
+            PRIMARY KEY (roll, branch,user_id,admission_year)
         )
     """)
 
@@ -36,7 +36,8 @@ def create_tables():
             performance TEXT,
             risk TEXT,
             user_id INTEGER,
-            PRIMARY KEY (roll, semester, branch,user_id)
+            admission_year INTEGER,
+            PRIMARY KEY (roll, semester, branch,admission_year,user_id)
         )
     """)
 
@@ -51,8 +52,9 @@ def create_config():
             branch TEXT,
             semester INTEGER,
             total_marks INTEGER,
+            admission_year INTEGER,
             user_id INTEGER,
-            PRIMARY KEY (branch, semester)
+            PRIMARY KEY (branch, semester,admission_year)
         )
     """)
 

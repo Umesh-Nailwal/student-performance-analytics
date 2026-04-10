@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, flash
-from services.utility import get_db, calculate_all
+from services.utility import get_db, calculate_all,get_username
 from services.auth_login import login_required
 
 results_bp = Blueprint("results", __name__)
@@ -37,5 +37,6 @@ def add_result():
 
     students = [dict(r) for r in rows]
     conn.close()
+    username=get_username()
 
-    return render_template("add_result.html", students=students)
+    return render_template("add_result.html", students=students,username=username)
