@@ -46,7 +46,7 @@ def students():
         params.append(branch)
 
     # ✅ FIX: Add ORDER BY inside query
-    query += " ORDER BY branch ASC, roll ASC"
+    query += " ORDER BY branch ASC,CAST( roll as INTEGER) ASC"
 
     # EXECUTE QUERY
     rows = conn.execute(query, params).fetchall()
