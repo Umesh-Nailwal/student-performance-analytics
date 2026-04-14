@@ -33,14 +33,13 @@
 
     <!-- ADMISSION YEAR -->
     <div class="filter-wrapper">
-        <select name="year">
-            <option value="{{ y.admission_year }}"
-{% if request.args.get('year') == y.admission_year|string %}selected{% endif %>All Year</option>
-         {% for y in years %}
-        <option value="{{ y.admission_year }}">
-            {{ y.admission_year }}
-        </option>
-        {% endfor %}
+  <option value="">All Year</option>
+    {% for y in years %}
+    <option value="{{ y.admission_year }}"
+    {% if selected_year == (y.admission_year | string) %}selected{% endif %}>
+        {{ y.admission_year }}
+    </option>
+    {% endfor %}
         </select>
     </div>
 {% set selected_branch = request.args.get('branch') %}
