@@ -34,7 +34,8 @@
     <!-- ADMISSION YEAR -->
     <div class="filter-wrapper">
         <select name="year">
-            <option value="">All Year</option>
+            <option value="{{ y.admission_year }}"
+{% if request.args.get('year') == y.admission_year|string %}selected{% endif %>All Year</option>
          {% for y in years %}
         <option value="{{ y.admission_year }}">
             {{ y.admission_year }}
@@ -42,16 +43,16 @@
         {% endfor %}
         </select>
     </div>
-
+{% set selected_branch = request.args.get('branch') %}
     <!-- BRANCH -->
     <div class="filter-wrapper">
         <select name="branch">
             <option value="">Branch</option>
-            <option value="AIML">AIML</option>
-            <option value="Civil">Civil</option>
-            <option value="Mechanical">Mechanical</option>
-           <option value="CS">CS</option>
-         <option value="IT">IT</option>
+            <option value="AIML" {% if selected_branch == 'AIML' %}selected{% endif %}>AIML</option>
+            <option value="Civil" {% if selected_branch == 'Civil' %}selected{% endif %}>Civil</option>
+            <option value="Mechanical" {% if selected_branch == 'Mechanical' %}selected{% endif %}>Mechanical</option>
+           <option value="CS" {% if selected_branch == 'CS' %}selected{% endif %}>CS</option>
+         <option value="IT" {% if selected_branch == 'IT' %}selected{% endif %}>IT</option>
         </select>
     </div>
 
@@ -99,26 +100,18 @@
          {% else %}
     <tbody>
         <tr>
-            <td colspan="3" style="text-align:center;">
+            <td colspan="5" style="text-align:center;">
                 No Student Record found. Add one above.
             </td>
         </tr>
-    </tbody>
+   
     {% endif %}
     </tbody>
 </table>
 </div>
 
 <script>
-  setTimeout(() => document.querySelector('.flash-wrap')?.remove(), 5);
-function clearSearch() {
-    window.location.href = "{{ url_for('students.students') }}";
-}
-
-function toggleClearBtn(input){
-    document.getElementById("clearBtn").style.display =
-        input.value.length > 0 ? "block" : "none";
-}
+  setTimeout(() => document.querySelector('.flash-wrap')?.remove(), 3000);
 </script>
 
 {% endblock %}
