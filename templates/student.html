@@ -30,7 +30,7 @@
             <i data-lucide="search" class="search-icon"></i>
         </div>
     </div>
-    </div>
+    
 {% set selected_year = request.args.get('year') %}
     <!-- ADMISSION YEAR -->
     <div class="filter-wrapper">
@@ -55,14 +55,8 @@
            <option value="CS" {% if selected_branch == 'CS' %}selected{% endif %}>CS</option>
          <option value="IT" {% if selected_branch == 'IT' %}selected{% endif %}>IT</option>
         </select>
-    </div>
-
-    <!-- VIEW TYPE -->
-    <div class="filter-wrapper">
-        
-           
-       
-    </div>
+    </div>       
+   </div>
   
     <!-- SUBMIT -->
   <div class="info-btn">
