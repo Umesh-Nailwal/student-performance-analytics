@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="info-cards">
+  <div>
+    <h2>Edit Student</h2>
+     <span class="redirect">
+    <a href="{{ url_for('students.students')  }}"><-- Back to the directory</a><br>
+    </span>     
+  </div>
+</div>
+<div class="form-container">
+  <form action="{{ url_for('students.edit_student',id=student.id) }}" method="POST">
+            <div class="form-group">
+                <label>Roll No</label>
+                <input type="text"  readonly step="1" min="1" name="roll"  id="roll" value="{{ student.roll }}" placeholder="{{ student.roll }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input id="fullname" type="text" name="name" maxlength="30" placeholder="{{ student.name }}" required>
+            </div>
+            
+            <div class="form-group">
+ {% set selected_branch = student.branch %}
+        <select name="branch">
+            <option value="">Branch</option>
+            <option value="AIML" {% if selected_branch == 'AIML' %}selected{% endif %}>AIML</option>
+            <option value="Civil" {% if selected_branch == 'Civil' %}selected{% endif %}>Civil</option>
+            <option value="Mechanical" {% if selected_branch == 'Mechanical' %}selected{% endif %}>Mechanical</option>
+           <option value="CS" {% if selected_branch == 'CS' %}selected{% endif %}>CS</option>
+         <option value="IT" {% if selected_branch == 'IT' %}selected{% endif %}>IT</option>
+        </select>
+            </div>
+    
+            <div class="form-group">
+                <label>Admission year</label>
+                <input type="number"  id="year" name="year" value="{{ student.admission_year }}" placeholder="{{ student.admission_year }}" min="2009" max="2030" required>
+            </div>
+            <button type="submit" class="btn"><i data-lucide="user-plus"></i>Edit Student</button>
+
+  </form>
+</div>
+{% endblock %}

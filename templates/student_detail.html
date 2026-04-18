@@ -100,8 +100,8 @@
                 </span>
             </td>
             <td class="action-buttons">
-                <a href="{{ url_for('modify.update_result', roll=r.roll, semester=r.semester) }}" class="edit-btn">✏️</a>
-                <a href="{{ url_for('modify.delete_result', roll=r.roll, semester=r.semester) }}" 
+                <a href="{{ url_for('modify.update_result', student_id=r.student_id, semester=r.semester) }}" class="edit-btn">✏️</a>
+                <a href="{{ url_for('modify.delete_result', student_id=r.student_id, semester=r.semester) }}" 
                    onclick="return confirm('Delete this semester record?');"
                    class="delete-btn">🗑️</a>
             </td>
@@ -111,7 +111,7 @@
     {% else %}
     <tbody>
          <tr>
-            <td colspan="3" style="text-align:center;">
+            <td colspan="7" style="text-align:center;">
                 No Semester Record found.
             </td>
         </tr>

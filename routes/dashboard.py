@@ -20,7 +20,7 @@ def home():
         SELECT ROUND(AVG(r.percentage), 2)
         FROM results r
         JOIN std_list s 
-        ON r.roll = s.roll AND r.branch = s.branch
+        ON r.student_id = s.id
         WHERE s.user_id=?
     """, (user_id,)).fetchone()[0] or 0
 
@@ -28,7 +28,7 @@ def home():
         SELECT ROUND(AVG(r.attendance), 2)
         FROM results r
         JOIN std_list s 
-        ON r.roll = s.roll AND r.branch = s.branch
+        ON r.student_id = s.id
         WHERE s.user_id=?
     """, (user_id,)).fetchone()[0] or 0
 
@@ -36,28 +36,28 @@ def home():
         SELECT COUNT(*)
         FROM results r
         JOIN std_list s 
-        ON r.roll = s.roll AND r.branch = s.branch
+        ON r.student_id = s.id 
         WHERE s.user_id=? AND r.risk='High'
     """, (user_id,)).fetchone()[0]
 
     top_students = conn.execute("""
-        SELECT s.name, r.roll, MAX(r.percentage) as best
+        SELECT s.name, s.roll, MAX(r.percentage) as best
         FROM results r
         JOIN std_list s 
-        ON r.roll = s.roll AND r.branch = s.branch
+        ON r.student_id = s.id
         WHERE s.user_id=?
-        GROUP BY r.roll, r.branch
+        GROUP BY s.roll, s.branch
         ORDER BY best DESC
         LIMIT 5
     """, (user_id,)).fetchall()
 
     weak_students = conn.execute("""
-        SELECT s.name, r.roll, MAX(r.percentage) as best
+        SELECT s.name, s.roll, MAX(r.percentage) as best
         FROM results r
         JOIN std_list s 
-        ON r.roll = s.roll AND r.branch = s.branch
+        ON r.student_id = s.id 
         WHERE s.user_id=?
-        GROUP BY r.roll, r.branch
+        GROUP BY s.roll, s.branch
         ORDER BY best ASC
         LIMIT 5
     """, (user_id,)).fetchall()
@@ -66,7 +66,7 @@ def home():
         SELECT semester, ROUND(AVG(r.percentage), 2) as avgp
         FROM results r
         JOIN std_list s 
-        ON r.roll = s.roll AND r.branch = s.branch
+        ON r.student_id = s.id
         WHERE s.user_id=?
         GROUP BY semester
     """, (user_id,)).fetchall()

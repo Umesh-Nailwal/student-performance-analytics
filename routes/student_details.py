@@ -1,40 +1,42 @@
-from flask import Blueprint, render_template 
+from flask import Blueprint, render_template,session 
 from services.utility import get_db,get_username
 from services.auth_login import login_required
 
 student_details_bp=Blueprint("adv",__name__)
 # ---------------- STUDENT DETAIL (ADVANCED RISK AI LOGIC) ----------------
 
-@student_details_bp.route("/student/<roll>")
+@student_details_bp.route("/student/<roll>/<branch>/<int:admission_year>")
 @login_required
-def student_detail(roll):
+def student_detail(roll,branch,admission_year):
+    user_id=session["user_id"]
+    
     conn = get_db()
-
+    params=[roll,branch,admission_year,user_id,]
+    
     student = conn.execute(
-        "SELECT * FROM std_list WHERE roll=?",
-        (roll,)
-    ).fetchone()
-
+        "SELECT * FROM std_list WHERE roll=? AND branch=? AND admission_year=? AND user_id=?",  params).fetchone()
+    student_id=student["id"]
+    
     results = conn.execute("""
         SELECT * FROM results
-        WHERE roll=?
+        WHERE student_id=?
         ORDER BY semester ASC
-    """, (roll,)).fetchall()
+    """, [student_id]).fetchall()
     
     avg_pct= conn.execute("""
     SELECT ROUND( AVG(percentage),2) FROM results
-    WHERE roll=?
-    """,(roll,)).fetchone()[0]
+    WHERE student_id=?
+    """,[student_id]).fetchone()[0]
     
     total_sem= conn.execute("""
     SELECT MAX(semester) FROM results
-    WHERE roll=?
-   """,(roll,) ).fetchone()[0]
+    WHERE student_id=?
+   """,[student_id]).fetchone()[0]
 
     conn.close()
 
-    percentages = [r["percentage"] for r in results]
-    attendances = [r["attendance"] for r in results]
+    percentages = [float(r["percentage"]) for r in results]
+    attendances = [float(r["attendance"]) for r in results]
 
     risk_score = 0
     insights = []

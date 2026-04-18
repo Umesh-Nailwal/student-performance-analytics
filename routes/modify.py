@@ -1,62 +1,123 @@
 from flask import Blueprint, render_template  ,request, redirect, session, flash, url_for
-from services.utility import get_db, calculate_all,get_username
+from services.utility import get_db, calculate_all,get_username, get_config_db
 from services.auth_login import login_required
 
 modify_bp=Blueprint("modify",__name__)
 
-@modify_bp.route("/update/<roll>/<int:semester>", methods=["GET", "POST"])
+@modify_bp.route("/update/<int:student_id>/<int:semester>", methods=["GET", "POST"])
 @login_required
-def update_result(roll, semester):
+def update_result(student_id, semester):
+
     conn = get_db()
+    conn2=get_config_db()
+
+    student = conn.execute("""
+        SELECT branch, roll, admission_year
+        FROM std_list
+        WHERE id=?
+    """, [student_id]).fetchone()
+
+    if not student:
+        conn.close()
+        flash("Student not found")
+        return redirect("/students")
+
+    branch = student["branch"]
+    roll = student["roll"]
+    admission_year = student["admission_year"]
 
     if request.method == "POST":
+
         marks = float(request.form["marks"])
         attendance = float(request.form["attendance"])
-        
-        student = conn.execute(
-    "SELECT branch FROM std_list WHERE roll=?",
-    (roll,)
-).fetchone()
 
-        branch = student["branch"]
+        config = conn2.execute("""
+            SELECT total_marks
+            FROM config
+            WHERE branch=? AND semester=? AND admission_year=? AND user_id=?
+        """, [branch, semester, admission_year, session["user_id"]]).fetchone()
 
-        percentage, grade, performance, risk = calculate_all(marks, attendance,branch,semester)
+        if not config:
+            total_marks=100
+        else:
+            total_marks = config["total_marks"]
+
+        if marks < 0 or marks > total_marks:
+            flash(f"Marks must be between 0 and {total_marks}")
+            return redirect(url_for("modify.update_result",
+                student_id=student_id,
+                semester=semester))
+
+        if attendance < 0 or attendance > 100:
+            flash("Attendance must be between 0 and 100")
+            return redirect(url_for("modify.update_result",
+                student_id=student_id,
+                semester=semester))
+
+        percentage, grade, performance, risk = calculate_all(
+            marks, attendance, branch, semester
+        )
 
         conn.execute("""
             UPDATE results
             SET marks=?, attendance=?, percentage=?, grade=?, performance=?, risk=?
-            WHERE roll=?  AND branch=? AND semester=?
-        """, (marks, attendance, percentage, grade, performance, risk, roll, branch,semester))
+            WHERE student_id=? AND semester=?
+        """, (
+            marks, attendance, percentage, grade,
+            performance, risk, student_id, semester
+        ))
 
         conn.commit()
         conn.close()
 
         flash("Record updated successfully!", "success")
-        return redirect(url_for("adv.student_detail", roll=roll))
 
-    else:
-        record = conn.execute("""
-            SELECT * FROM results
-            WHERE roll=? AND semester=?
-        """, (roll, semester)).fetchone()
+        return redirect(url_for(
+            "adv.student_detail",
+            roll=roll,
+            branch=branch,
+            admission_year=admission_year
+        ))
 
-        conn.close()
-        return render_template("edit.html", record=record)
-  
-@modify_bp.route("/delete/<roll>/<int:semester>")
+    record = conn.execute("""
+        SELECT * FROM results
+        WHERE student_id=? AND semester=?
+    """, [student_id, semester]).fetchone()
+
+    conn.close()
+
+    return render_template("edit.html", record=record)
+
+@modify_bp.route("/delete/<int:student_id>/<int:semester>")
 @login_required
-def delete_result(roll, semester):
+def delete_result(student_id, semester):
+
     conn = get_db()
 
-    conn.execute(
-        "DELETE FROM results WHERE roll=? AND semester=?",
-        (roll, semester)
-    )
+    student = conn.execute("""
+        SELECT roll, branch, admission_year
+        FROM std_list
+        WHERE id=?
+    """, [student_id]).fetchone()
+
+    if not student:
+        conn.close()
+        flash("Student not found")
+        return redirect("/students")
+
+    conn.execute("""
+        DELETE FROM results
+        WHERE student_id=? AND semester=?
+    """, [student_id, semester])
 
     conn.commit()
     conn.close()
 
     flash("Record deleted successfully!", "success")
-    username=get_username()
-    return redirect(url_for("adv.student_detail", roll=roll))
-    
+
+    return redirect(url_for(
+        "adv.student_detail",
+        roll=student["roll"],
+        branch=student["branch"],
+        admission_year=student["admission_year"]
+    ))    

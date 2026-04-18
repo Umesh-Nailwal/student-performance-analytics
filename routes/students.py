@@ -45,8 +45,8 @@ def students():
         query += " AND branch=?"
         params.append(branch)
 
-    # ✅ FIX: Add ORDER BY inside query
-    query += " ORDER BY branch ASC, roll ASC"
+    # Add ORDER BY inside query
+    query += " ORDER BY branch ASC,CAST( roll as INTEGER) ASC"
 
     # EXECUTE QUERY
     rows = conn.execute(query, params).fetchall()
@@ -70,7 +70,7 @@ def add_student():
 
     if request.method == "POST":
         user_id = session["user_id"]
-
+       
         conn = get_db()
         conn.execute("""
             INSERT INTO std_list (roll, name, branch, admission_year, user_id)
@@ -84,10 +84,51 @@ def add_student():
         ))
         conn.commit()
         conn.close()
-
+       
         flash("Student added successfully")
-
+       
         return redirect("/students")
 
     username = get_username()
     return render_template("add_student.html", username=username)
+
+@student_bp.route("/edit_student/<int:id>", methods=["GET", "POST"])
+def edit_student(id):
+    conn = get_db()
+
+    if request.method == "POST":
+        name = request.form["name"]
+        roll = request.form["roll"]
+        branch = request.form["branch"]
+        year = request.form["year"]
+
+        conn.execute("""
+            UPDATE std_list
+            SET name=?, roll=?, branch=?, admission_year=?
+            WHERE id=?
+        """, (name, roll, branch, year, id))
+
+        conn.commit()
+        conn.close()
+
+        flash("Student updated")
+        return redirect("/students")
+
+    student = conn.execute(
+        "SELECT * FROM std_list WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    conn.close()
+    return render_template("edit-student.html", student=student)
+ 
+@student_bp.route("/delete_student/<int:id>", methods=["GET","POST"])
+def delete_student(id):
+    conn = get_db()
+
+    conn.execute("DELETE FROM std_list WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+
+    flash("Student deleted")
+    return redirect("/students")

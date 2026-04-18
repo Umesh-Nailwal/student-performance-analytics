@@ -9,7 +9,7 @@ from routes.student_details import student_details_bp
 from routes.filtered_list import filtered_list_bp
 from routes.modify import modify_bp
 import os
-from services.utility import get_db
+from services.utility import get_db, get_config_db
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "fallback_key")
 

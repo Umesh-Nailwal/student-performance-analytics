@@ -4,7 +4,7 @@
  <div>
 <h3 >Students Directory</h3><br>
 <p>Manage and view all registered students</p>
-  </div>
+ </div>
 <a href="{{ url_for('students.add_student')  }}" class="btn">Add Students</a>
 </div>
 
@@ -30,36 +30,36 @@
             <i data-lucide="search" class="search-icon"></i>
         </div>
     </div>
+   
 
     <!-- ADMISSION YEAR -->
     <div class="filter-wrapper">
-        <select name="year">
-            <option value="">All Year</option>
-         {% for y in years %}
-        <option value="{{ y.admission_year }}">
-            {{ y.admission_year }}
-        </option>
-        {% endfor %}
+      {% set selected_year = request.args.get('year') %}
+     <select name="year" > 
+  <option value="">All Year</option>
+    {% for y in years %}
+    <option value="{{ y.admission_year }}"
+    {% if selected_year == (y.admission_year | string) %}selected{% endif %}>
+        {{ y.admission_year }}
+    </option>
+    {% endfor %}
         </select>
     </div>
-
+{% set selected_branch = request.args.get('branch') %}
     <!-- BRANCH -->
     <div class="filter-wrapper">
         <select name="branch">
             <option value="">Branch</option>
-            <option value="AIML">AIML</option>
-            <option value="Civil">Civil</option>
-            <option value="Mechanical">Mechanical</option>
+            <option value="AIML" {% if selected_branch == 'AIML' %}selected{% endif %}>AIML</option>
+            <option value="Civil" {% if selected_branch == 'Civil' %}selected{% endif %}>Civil</option>
+            <option value="Mechanical" {% if selected_branch == 'Mechanical' %}selected{% endif %}>Mechanical</option>
+           <option value="CS" {% if selected_branch == 'CS' %}selected{% endif %}>CS</option>
+         <option value="IT" {% if selected_branch == 'IT' %}selected{% endif %}>IT</option>
         </select>
     </div>
 
-    <!-- VIEW TYPE -->
-    <div class="filter-wrapper">
-        
-           
-       
-    </div>
-  </div>
+  
+</div>
     <!-- SUBMIT -->
   <div class="info-btn">
     <button type="submit" class="btn">Apply</button>
@@ -76,6 +76,7 @@
             <th><i data-lucide="book-open"></i> Branch</th>
             <th>Adm. year</th>
             <th class="text-center"><i data-lucide="eye"></i> View</th>
+         <th>Action</th>
         </tr>
     </thead>
  {% if students %}
@@ -88,35 +89,33 @@
             <td>{{ student.admission_year  }}</td>
             <td class="text-center">
                 <a class="view-btn"
-                   href="{{ url_for('adv.student_detail', roll=student.roll) }}">
+                   href="{{ url_for('adv.student_detail', roll=student.roll,branch=student.branch,admission_year=student.admission_year) }}">
                     <i data-lucide="arrow-right-circle"></i>
                 </a>
+            </td>
+         <td>
+              <a href="{{ url_for('students.edit_student', id=student.id) }}" class="edit-btn">✏️</a>
+                <a href="{{ url_for('students.delete_student',id=student.id) }}" 
+                   onclick="return confirm('Delete this student record?');"
+                 class="delete-btn">🗑️</a>
             </td>
         </tr>
        {% endfor %}
          {% else %}
     <tbody>
         <tr>
-            <td colspan="3" style="text-align:center;">
+            <td colspan="6" style="text-align:center;">
                 No Student Record found. Add one above.
             </td>
         </tr>
-    </tbody>
+   
     {% endif %}
     </tbody>
 </table>
 </div>
 
 <script>
-  setTimeout(() => document.querySelector('.flash-wrap')?.remove(), 5);
-function clearSearch() {
-    window.location.href = "{{ url_for('students.students') }}";
-}
-
-function toggleClearBtn(input){
-    document.getElementById("clearBtn").style.display =
-        input.value.length > 0 ? "block" : "none";
-}
+  setTimeout(() => document.querySelector('.flash-wrap')?.remove(), 3000);
 </script>
 
 {% endblock %}
