@@ -1,11 +1,9 @@
 from flask import (
 Blueprint, render_template,
-flash,request,session, redirect, url_for, current_app, session
+flash,request,session, redirect, url_for
 )
 from services.utility import get_config_db, get_db, get_username
 from services.auth_login import login_required
-import os
-import csv
 admin_panel_bp =Blueprint("admin_panel",__name__)
 
 @admin_panel_bp.route("/admin-panel", methods=["GET", "POST"])
@@ -23,11 +21,12 @@ def admin_panel():
             session["user_id"]
         ))
         conn.commit()
+        
+        conn.close()
        
 
         flash("Saved!", "success")
     configs = conn.execute("SELECT * FROM config WHERE user_id=?", (session["user_id"],)).fetchall()
-    conn.close()
     username=get_username()
 
 

@@ -50,9 +50,8 @@ def create_config():
             branch TEXT,
             semester INTEGER,
             total_marks INTEGER,
-            admission_year INTEGER,
             user_id INTEGER,
-            PRIMARY KEY (branch, semester, admission_year, user_id)
+            PRIMARY KEY (branch, semester, user_id)
         )
     """)
     conn.commit()

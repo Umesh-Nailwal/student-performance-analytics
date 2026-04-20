@@ -21,7 +21,7 @@ def add_result():
 
         try:
             student = conn.execute("""
-            SELECT branch FROM std_list
+            SELECT branch  FROM std_list
             WHERE id=? AND user_id=?
         """, [student_id, user_id]).fetchone()
             if not student:
@@ -29,8 +29,8 @@ def add_result():
                 return redirect("/add_result")
 
             branch = student["branch"]
-       
-            total_marks=get_total_marks(branch, semester,user_id)
+                 
+            total_marks=get_total_marks(branch, semester,year,user_id)
         
             if marks < 0 or marks > total_marks:
                 flash(f"Marks must be between 0 and {total_marks}")
@@ -39,9 +39,7 @@ def add_result():
 
        
 
-            percentage, grade, performance, risk = calculate_all(
-            marks, attendance, branch, semester
-        )
+            percentage, grade, performance, risk = calculate_all(marks, attendance, branch, semester)
 
             conn.execute("""
             INSERT INTO results (
@@ -52,8 +50,7 @@ def add_result():
                 percentage,
                 grade,
                 performance,
-                risk
-            )
+                risk )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             student_id,
@@ -72,9 +69,6 @@ def add_result():
             flash("Semester Result added successfully")
             return redirect("/students")
 
-
-
-            conn.close()
         except Exception as e:
             print("ERROR:", e)
             flash("Something went wrong. Please try again.")

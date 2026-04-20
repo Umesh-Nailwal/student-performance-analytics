@@ -6,16 +6,14 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # ---------- DATABASE ----------
 
 def get_db():
-    db_path = os.path.join(BASE_DIR, "../students.db")
+    db_path = "students.db"
     conn = sqlite3.connect(db_path)
-   # conn = sqlite3.connect("students.db", timeout=10)
     conn.row_factory = sqlite3.Row
     return conn
 
 def get_config_db():
-    db_path = os.path.join(BASE_DIR, "../config.db")
+    db_path = "config.db"
     conn = sqlite3.connect(db_path)
-   # conn = sqlite3.connect("config.db")
     conn.row_factory = sqlite3.Row
     return conn
 

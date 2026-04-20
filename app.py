@@ -3,15 +3,14 @@ from routes.students import student_bp
 from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.results import results_bp
-from database.init_db import init_db
 from routes.admin_panel import admin_panel_bp
 from routes.student_details import student_details_bp
 from routes.filtered_list import filtered_list_bp
 from routes.modify import modify_bp
+from database.init_db import init_db
 import os
-from services.utility import get_db, get_config_db
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "fallback_key")
+app.secret_key = os.environ.get("SECRET_KEY","fallback_key")
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)

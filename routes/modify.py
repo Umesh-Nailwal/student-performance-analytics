@@ -9,7 +9,6 @@ modify_bp=Blueprint("modify",__name__)
 def update_result(student_id, semester):
 
     conn = get_db()
-    conn2=get_config_db()
 
     student = conn.execute("""
         SELECT branch, roll, admission_year
@@ -31,23 +30,7 @@ def update_result(student_id, semester):
         marks = float(request.form["marks"])
         attendance = float(request.form["attendance"])
 
-        config = conn2.execute("""
-            SELECT total_marks
-            FROM config
-            WHERE branch=? AND semester=? AND admission_year=? AND user_id=?
-        """, [branch, semester, admission_year, session["user_id"]]).fetchone()
-
-        if not config:
-            total_marks=100
-        else:
-            total_marks = config["total_marks"]
-
-        if marks < 0 or marks > total_marks:
-            flash(f"Marks must be between 0 and {total_marks}")
-            return redirect(url_for("modify.update_result",
-                student_id=student_id,
-                semester=semester))
-
+        
         if attendance < 0 or attendance > 100:
             flash("Attendance must be between 0 and 100")
             return redirect(url_for("modify.update_result",
@@ -55,7 +38,7 @@ def update_result(student_id, semester):
                 semester=semester))
 
         percentage, grade, performance, risk = calculate_all(
-            marks, attendance, branch, semester
+            marks, attendance, branch, semester,
         )
 
         conn.execute("""
@@ -81,7 +64,7 @@ def update_result(student_id, semester):
 
     record = conn.execute("""
         SELECT * FROM results
-        WHERE student_id=? AND semester=?
+        WHERE student_id=? AND semester=? 
     """, [student_id, semester]).fetchone()
 
     conn.close()

@@ -43,6 +43,12 @@
                 Students
             </a>
 
+           <a href="{{ url_for('filtered.semester_results') }}"
+               class="nav-link {% if request.endpoint and request.endpoint.startswith('filtered.semester_results') %}active{% endif %}">
+                <i data-lucide="users"></i>
+                Semester Results
+            </a>
+
             <a href="{{ url_for('students.add_student') }}"
                class="nav-link {% if request.endpoint and request.endpoint.startswith('students.add_student') %}active{% endif %}">
                 <i data-lucide="user-plus"></i>

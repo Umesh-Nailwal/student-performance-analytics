@@ -45,21 +45,21 @@ def home():
         FROM results r
         JOIN std_list s 
         ON r.student_id = s.id
-        WHERE s.user_id=?
-        GROUP BY s.roll, s.branch
-        ORDER BY best DESC
-        LIMIT 5
+        WHERE s.user_id=? AND (r.percentage)>80
+        GROUP BY s.roll, s.branch 
+        ORDER BY best DESC, semester
+        LIMIT 7
     """, (user_id,)).fetchall()
 
     weak_students = conn.execute("""
-        SELECT s.name, s.roll, MAX(r.percentage) as best
+        SELECT s.name, s.roll, MIN(r.percentage) as weak
         FROM results r
         JOIN std_list s 
         ON r.student_id = s.id 
-        WHERE s.user_id=?
+        WHERE s.user_id=? AND (r.percentage)<70
         GROUP BY s.roll, s.branch
-        ORDER BY best ASC
-        LIMIT 5
+        ORDER BY weak ASC, semester
+        LIMIT 7
     """, (user_id,)).fetchall()
 
     data = conn.execute("""

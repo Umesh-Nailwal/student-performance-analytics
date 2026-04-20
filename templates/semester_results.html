@@ -1,10 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="info-cards redirect">
-            <span class="redirect">
-    <a href="{{ url_for('students.students')  }}"><-- Back to the directory</a><br>
-    </span>     
-    </div>
 <div class="info-cards">
         <div>
         <h2>Semester Result</h2><br>
@@ -12,7 +7,7 @@
         </div>
 </div>
 <form method="GET" action="{{ url_for('filtered.semester_results') }}" class="top-controls">
-
+    <div class="info-colm1">
     <!-- SEARCH -->
     <div class="search-wrapper">
         <div class="search-input">
@@ -36,21 +31,23 @@
         </select>
     </div>
 
+{% set selected_branch = request.args.get('branch') %}
     <!-- BRANCH -->
     <div class="filter-wrapper">
         <select name="branch">
             <option value="">Branch</option>
-            <option value="AIML">AIML</option>
-            <option value="Civil">Civil</option>
-            <option value="Mechanical">Mechanical</option>
+            <option value="AIML" {% if selected_branch == 'AIML' %}selected{% endif %}>AIML</option>
+            <option value="Civil" {% if selected_branch == 'Civil' %}selected{% endif %}>Civil</option>
+            <option value="Mechanical" {% if selected_branch == 'Mechanical' %}selected{% endif %}>Mechanical</option>
+           <option value="CS" {% if selected_branch == 'CS' %}selected{% endif %}>CS</option>
+         <option value="IT" {% if selected_branch == 'IT' %}selected{% endif %}>IT</option>
         </select>
     </div>
-
     <!-- VIEW TYPE -->
     <div class="filter-wrapper">
         <select name="semester">
            <option value="">All Sem</option>
-        {% for i in range(1,7) %}
+        {% for i in range(1,5) %}
         <option value="{{ i }}"
             {% if request.args.get('semester') == i|string %}selected{% endif %}>
             Sem {{ i }}
@@ -59,24 +56,19 @@
     </select>
         
     </div>
-    <div class="filter-wrapper">
-             <select name="sort" onchange="this.form.submit()">
-            <option value="">Sort by Percentage</option>
-            <option value="desc">High to Low</option>
-            <option value="asc">Low to High</option>
-            <option value="roll">Sort by Roll number</option>
-        </select>
-    </div>
+</div>
     <!-- SUBMIT -->
+    <div>
     <button type="submit" class="btn">Apply</button>
-
-<br>
+    </div>
+    </form>
 
 <div class="table-container">
 <table>
     <thead>
         <tr>
             <th>Roll</th>
+            <th>Name</th>
             <th>Semester</th>
             <th>Percentage</th>
             <th>Grade</th>
@@ -84,11 +76,12 @@
             <th>Risk</th>
         </tr>
     </thead>
-
+    {% if results %}
     <tbody>
         {% for r in results %}
         <tr>
             <td>{{ r.roll }}</td>
+            <td>{{ r.name }}</td>
             <td>{{ r.semester }}</td>
             <td>{{ r.percentage }}%</td>
             <td>{{ r.grade }}</td>
@@ -97,6 +90,13 @@
         </tr>
         {% endfor %}
     </tbody>
+    {% else %}
+    <tbody>
+        <tr>
+            <td colspan="7" style="text-align:center;">No records for the Current filter <br> Try changing some</td>
+        </tr>
+    </tbody>
+    {% endif %}
 </table>
 </div>
 

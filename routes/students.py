@@ -11,7 +11,7 @@ student_bp = Blueprint("students", __name__)
 def students():
 
     user_id = session["user_id"]
-    search = request.args.get("search")
+    search = request.args.get("search","").strip()
     year = request.args.get("year")
     branch = request.args.get("branch")
 
@@ -93,6 +93,7 @@ def add_student():
     return render_template("add_student.html", username=username)
 
 @student_bp.route("/edit_student/<int:id>", methods=["GET", "POST"])
+@login_required
 def edit_student(id):
     conn = get_db()
 
@@ -105,8 +106,8 @@ def edit_student(id):
         conn.execute("""
             UPDATE std_list
             SET name=?, roll=?, branch=?, admission_year=?
-            WHERE id=?
-        """, (name, roll, branch, year, id))
+            WHERE id=? AND user_id=?
+        """, (name, roll, branch, year, id,session["user_id"]))
 
         conn.commit()
         conn.close()
@@ -122,11 +123,13 @@ def edit_student(id):
     conn.close()
     return render_template("edit-student.html", student=student)
  
-@student_bp.route("/delete_student/<int:id>", methods=["GET","POST"])
+@student_bp.route("/delete_student/<int:id>", methods=["GET"])
+@login_required
 def delete_student(id):
     conn = get_db()
 
-    conn.execute("DELETE FROM std_list WHERE id=?", (id,))
+    conn.execute("DELETE FROM std_list WHERE id=? AND user_id= ?", (id,session["user_id"]))
+    conn.execute("DELETE FROM results WHERE student_id=?",(id,))
     conn.commit()
     conn.close()
 
