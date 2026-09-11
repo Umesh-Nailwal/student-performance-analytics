@@ -360,13 +360,18 @@ button:hover, .side-card:hover {
     border-radius: var(--radius);
     box-shadow: 0 10px 30px var(--color-shadow);
     overflow-x: auto;
+    overflow-y: hidden;
+    width: fit-content;
     scrollbar-width: thin;
+    max-width: 100%;
     margin-bottom: 12px;
+    display: block;
 }
 
 table {
-    min-width: 700px;  /* important */
     border-collapse: collapse;
+    width: auto;
+    min-width: 700px;
 }
 
 thead {
@@ -832,5 +837,13 @@ html {
     }
     .chart-card{
         height:300px;
+    }
+    .table-container{
+        width: 100%;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+    table{
+        min-width: 680px;
     }
 }

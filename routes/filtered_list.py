@@ -18,7 +18,7 @@ def semester_results():
     semester = request.args.get("semester")
     branch = request.args.get("branch")
     year = request.args.get("year")
-    search = request.args.get("search")
+    search = request.args.get("search", '').strip()
 
     conn = get_db()
 
@@ -49,8 +49,8 @@ def semester_results():
 
     if search:
         query += " AND (s.name LIKE ? OR s.roll LIKE ? )"
-        params.append(f"% + search + %")
-        params.append(f"% + search + %")
+        params.append(f"%{search}%")
+        params.append(f"%{search}%")
 
     # 🔥 Sorting
     query += " ORDER BY s.branch, s.roll, r.semester ASC"

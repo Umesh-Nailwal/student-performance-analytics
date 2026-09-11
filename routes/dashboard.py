@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session
-from services.utility import get_db
+from services.utility import get_db, get_username
+from services.student_queries import get_dashboard_stats
 from services.auth_login import login_required
 
 dashboard_bp = Blueprint("dashboard", __name__)
@@ -87,5 +88,28 @@ def home():
         avg_pct=avg_pct,
         avg_att=avg_att,
         high_risk_count=high_risk_count,
+        username=username
+    )
+
+@dashboard_bp.route("/v2")
+@login_required
+def home_v2():
+    total, avg_pct, avg_att, high_risk, top_students, weak_students, chart_data= get_dashboard_stats()
+    username=get_username()
+
+
+    semesters = [f"Sem {row['semester']}" for row in chart_data]
+    averages = [row["avgp"] for row in chart_data]
+
+    return render_template(
+        "dashboard.html",
+        total=total,
+        semesters=semesters,
+        averages=averages,
+        top_students=top_students,
+        weak_students=weak_students,
+        avg_pct=avg_pct,
+        avg_att=avg_att,
+        high_risk_count=high_risk,
         username=username
     )

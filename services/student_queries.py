@@ -9,8 +9,9 @@ from flask import session
 
 # ───────────────────────── STUDENTS ─────────────────────────
 
-def get_all_students(user_id, search=None, year=None, branch=None):
+def get_all_students(search=None, year=None, branch=None):
     conn = get_db()
+    user_id = session['user_id']
     query = "SELECT * FROM std_list WHERE user_id=?"
     params = [user_id]
     if search:
@@ -28,8 +29,9 @@ def get_all_students(user_id, search=None, year=None, branch=None):
     return [dict(r) for r in rows]
 
 
-def get_distinct_years(user_id):
+def get_distinct_years():
     conn = get_db()
+    user_id = session['user_id']
     rows = conn.execute(
         "SELECT DISTINCT admission_year FROM std_list WHERE user_id=? ORDER BY admission_year DESC",
         (user_id,)
@@ -38,8 +40,9 @@ def get_distinct_years(user_id):
     return rows
 
 
-def get_distinct_branches(user_id):
+def get_distinct_branches():
     conn = get_db()
+    user_id = session['user_id']
     rows = conn.execute(
         "SELECT DISTINCT branch FROM std_list WHERE user_id=?",
         (user_id,)
@@ -48,8 +51,9 @@ def get_distinct_branches(user_id):
     return rows
 
 
-def insert_student(roll, name, branch, admission_year, user_id):
+def insert_student(roll, name, branch, admission_year):
     conn = get_db()
+    user_id = session['user_id']
     conn.execute(
         "INSERT INTO std_list (roll, name, branch, admission_year, user_id) VALUES (?, ?, ?, ?, ?)",
         (roll, name, branch, admission_year, user_id)
@@ -60,7 +64,8 @@ def insert_student(roll, name, branch, admission_year, user_id):
 
 def get_student_by_roll(roll):
     conn = get_db()
-    row = conn.execute("SELECT * FROM std_list WHERE roll=?", (roll,)).fetchone()
+    user_id = session['user_id']
+    row = conn.execute("SELECT * FROM std_list WHERE roll=? AND user_id =?", (roll, user_id)).fetchone()
     conn.close()
     return row
 
@@ -69,6 +74,7 @@ def get_student_by_roll(roll):
 
 def get_results_by_roll(roll):
     conn = get_db()
+    user_id = session['user_id']
     rows = conn.execute(
         "SELECT * FROM results WHERE roll=? ORDER BY semester ASC", (roll,)
     ).fetchall()
@@ -161,46 +167,46 @@ def get_filtered_results(user_id, semester=None, branch=None, year=None, search=
 
 # ───────────────────────── DASHBOARD ─────────────────────────
 
-def get_dashboard_stats(user_id):
+def get_dashboard_stats():
     conn = get_db()
-
+    user_id= session['user_id']
     total = conn.execute(
         "SELECT COUNT(*) FROM std_list WHERE user_id=?", (user_id,)
     ).fetchone()[0]
 
     avg_pct = conn.execute("""
         SELECT ROUND(AVG(r.percentage), 2)
-        FROM results r JOIN std_list s ON r.roll = s.roll AND r.branch = s.branch
+        FROM results r JOIN std_list s ON r.student_id = s.id
         WHERE s.user_id=?
     """, (user_id,)).fetchone()[0] or 0
 
     avg_att = conn.execute("""
         SELECT ROUND(AVG(r.attendance), 2)
-        FROM results r JOIN std_list s ON r.roll = s.roll AND r.branch = s.branch
+        FROM results r JOIN std_list s ON r.student_id = s.id
         WHERE s.user_id=?
     """, (user_id,)).fetchone()[0] or 0
 
     high_risk = conn.execute("""
         SELECT COUNT(*) FROM results r
-        JOIN std_list s ON r.roll = s.roll AND r.branch = s.branch
+        JOIN std_list s ON r.student_id = s.id
         WHERE s.user_id=? AND r.risk='High'
     """, (user_id,)).fetchone()[0]
 
     top_students = conn.execute("""
-        SELECT s.name, r.roll, MAX(r.percentage) as best
-        FROM results r JOIN std_list s ON r.roll = s.roll AND r.branch = s.branch
-        WHERE s.user_id=? GROUP BY r.roll, r.branch ORDER BY best DESC LIMIT 5
+        SELECT s.name, s.roll, MAX(r.percentage) as best
+        FROM results r JOIN std_list s ON r.student_id = s.id
+        WHERE s.user_id=? GROUP BY s.roll, s.branch ORDER BY best DESC LIMIT 5
     """, (user_id,)).fetchall()
 
     weak_students = conn.execute("""
-        SELECT s.name, r.roll, MAX(r.percentage) as best
-        FROM results r JOIN std_list s ON r.roll = s.roll AND r.branch = s.branch
-        WHERE s.user_id=? GROUP BY r.roll, r.branch ORDER BY best ASC LIMIT 5
+        SELECT s.name, s.roll, MAX(r.percentage) as best
+        FROM results r JOIN std_list s ON r.student_id = s.id
+        WHERE s.user_id=? GROUP BY s.roll, s.branch ORDER BY best ASC LIMIT 5
     """, (user_id,)).fetchall()
 
     chart_data = conn.execute("""
         SELECT semester, ROUND(AVG(r.percentage), 2) as avgp
-        FROM results r JOIN std_list s ON r.roll = s.roll AND r.branch = s.branch
+        FROM results r JOIN std_list s ON r.student_id = s.id
         WHERE s.user_id=? GROUP BY semester
     """, (user_id,)).fetchall()
 
@@ -217,7 +223,7 @@ def get_configs(user_id):
     return rows
 
 
-def upsert_config(branch, semester, total_marks, user_id, admission_year=None):
+def update_configs(branch, semester, total_marks, user_id, admission_year=None):
     conn = get_config_db()
     conn.execute(
         "INSERT OR REPLACE INTO config VALUES (?, ?, ?, ?, ?)",
