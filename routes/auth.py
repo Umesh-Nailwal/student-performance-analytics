@@ -34,10 +34,11 @@ def login():
         if user and check_password_hash(user["password"], request.form["password"]):
             session["user_id"] = user["id"]              
             session["username"] = user["username"]
+            conn.close()
             return redirect(url_for("dashboard.home"))
         else:
             flash("Invalid credentials", "danger")
-        conn.close()
+       
 
     return render_template("login.html")
 

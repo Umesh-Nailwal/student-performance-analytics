@@ -8,7 +8,7 @@ from services.auth_login import login_required
 filtered_list_bp = Blueprint("filtered", __name__)
 
 # ------ Semester wise results ------
-@filtered_list_bp.route("/semester-results")
+@filtered_list_bp.route("/semester-results",methods=["GET"])
 @login_required
 def semester_results():
 
@@ -24,10 +24,10 @@ def semester_results():
 
     # 🔥 Base query
     query = """
-        SELECT s.name, s.admission_year, r.*
+        SELECT s.name, s.admission_year,s.roll,s.branch, r.*
         FROM results r
         JOIN std_list s 
-        ON r.roll = s.roll AND r.branch = s.branch
+        ON r.student_id=s.id 
         WHERE s.user_id=?
     """
 
@@ -40,7 +40,7 @@ def semester_results():
         params.append(semester)
 
     if branch:
-        query += " AND r.branch=?"
+        query += " AND s.branch=?"
         params.append(branch)
 
     if year:
@@ -48,11 +48,12 @@ def semester_results():
         params.append(year)
 
     if search:
-        query += " AND s.name LIKE ?"
-        params.append('%' + search + '%')
+        query += " AND (s.name LIKE ? OR s.roll LIKE ? )"
+        params.append(f"% + search + %")
+        params.append(f"% + search + %")
 
     # 🔥 Sorting
-    query += " ORDER BY r.semester ASC"
+    query += " ORDER BY s.branch, s.roll, r.semester ASC"
 
     results = conn.execute(query, tuple(params)).fetchall()
 
