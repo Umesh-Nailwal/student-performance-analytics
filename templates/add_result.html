@@ -23,7 +23,7 @@
     <select name="student" required>
         <option value="">Select Student</option>
         {% for s in students %}
-            <option value="{{ s['roll'] }}|{{  s['branch']  }}">
+            <option value="{{ s.id }}">
                 {{ s['roll'] }} - {{ s['name'] }} ({{  s['branch']  }})
             </option>
         {% endfor %}
@@ -42,11 +42,11 @@
   </div><br>
   <div class="form-group">
   <label>Enter Marks:</label>
-    <input type="number" step="0.01"  name="marks" placeholder="Marks (%)" required><br><br>
+    <input type="number" step="0.01"   name="marks" placeholder="Marks" required><br><br>
   </div>
   <div class="form-group">
   <label>Enter Attendance:</label>
-    <input type="number" step="0.01" name="attendance" placeholder="Attendance (%)" required><br><br>
+    <input type="number" step="0.01" max="100" name="attendance" placeholder="Attendance (%)" required><br><br>
     <div class="form-group"></div>
     <button type="submit" class="btn"><i data-lucide="file-plus"></i>Save Result</button>
 </form>
