@@ -22,6 +22,5 @@ app.register_blueprint(student_details_bp)
 app.register_blueprint(filtered_list_bp)
 # ---------------- RUN ----------------
 init_db()
-
 if __name__ == "__main__":
     app.run(debug=True)

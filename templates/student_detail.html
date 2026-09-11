@@ -33,7 +33,7 @@
             <!-- =========== Student Average precentage==========-->
             <div class="average-sem">
                 <p>Overall Average</p>
-                <span style="font-size: 28px; font-weight: 600;color: black;"><i data-lucide="lucide lucide-award-gold"></i>{{ avg_pct  }}%</span>
+                <span style="font-size: 28px; font-weight: 600;color: black;"><i data-lucide="lucide-award"></i>{{ avg_pct  }}%</span>
                 <p>Across {{ total_sem  }} semester </p>
             </div>
 </div>
@@ -47,17 +47,35 @@
 
 <!-- ================= RISK INSIGHT PANEL ================= -->
 <div id="riskSection" class="risk-card" style="display:none;">
+    <div class="risk-anlysis">
     <h4>📊 Predictive Risk Analysis</h4>
 
     {% for insight in insights %}
         <p>• {{ insight }}</p>
     {% endfor %}
-    <br>
-    <h5>Final Risk Level:
+        
+    </div>
+    
+    <div class="predict-pct">
+    <h4>Next Semester Predicted Percentage</h4>
+    <p>{{ predicted_next }}</p>
+    </div>
+    <h5>Final Risk Level:</h5>
+    <div class="risk-level">
         <span class="badge {{ final_risk|lower }}">
             {{ final_risk }}
         </span>
-    </h5>
+        {% if final_risk == "High" %}
+          <p style="color:red;">This student is at serious academic risk. 
+            Immediate intervention is recommended.</p>
+         {% elif final_risk == "Medium" %}
+            <p style="color:orange;">This student needs some guidance. 
+              A counselling session is advised.</p>
+          {% else %}
+             <p style="color:green;">This student is performing well. 
+               Keep up the good work.</p>
+          {% endif %}
+        </div>
 </div>
 <!-- ================= CHART ================= -->
 <div class="chart-card">

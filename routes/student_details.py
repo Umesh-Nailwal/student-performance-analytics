@@ -50,14 +50,14 @@ def student_detail(roll,branch,admission_year):
         # 1️⃣ Low performance
         if performance_score < 60:
             risk_score += 2
-            insights.append("Overall performance below safe threshold.")
+            insights.append("This student's overall performance needs attention. Their scores and attendance together fall below the acceptable level.")
 
         # 2️⃣ Two consecutive decline
         if len(percentages) >= 3:
             if (percentages[-1] < percentages[-2] and
                 percentages[-2] < percentages[-3]):
                 risk_score += 2
-                insights.append("Two consecutive semesters declining.")
+                insights.append("This student's marks have been going down for the last two semesters in a row. Early support is recommended.")
 
         # 3️⃣ Sharp drop >20
         if len(percentages) >= 2:
@@ -68,12 +68,19 @@ def student_detail(roll,branch,admission_year):
         # 4️⃣ Unstable fluctuation
         if (max(percentages) - min(percentages)) > 30:
             risk_score += 1
-            insights.append("Performance instability detected.")
+            insights.append("This student's marks vary a lot from semester to semester, which suggests inconsistent effort or external challenges.")
 
         # 5️⃣ Low attendance
         if latest_attendance < 65:
             risk_score += 1
-            insights.append("Attendance below recommended level.")
+            insights.append("This student has been absent more than recommended. Low attendance often leads to poor performance in upcoming exams.")
+            #6 
+        if len(percentages) >= 2:
+            trend = percentages[-1] - percentages[-2]
+            predicted_next = round(latest_percentage + (trend * 0.5), 2)
+            predicted_next = max(0, min(100, predicted_next))
+        else:
+            predicted_next = latest_percentage
 
         # Final decision
         if risk_score >= 5:
@@ -97,6 +104,7 @@ def student_detail(roll,branch,admission_year):
         results=results,
         insights=insights,
         final_risk=final_risk,
+        predicted_next=predicted_next,
         avg_pct=avg_pct,
         total_sem=total_sem,
         username=username
