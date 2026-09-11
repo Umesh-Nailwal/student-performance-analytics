@@ -35,7 +35,7 @@
 /* ================= BODY AND GLOBAL ================ */
 body{
     color: #1e293b;
-    min-height: 100vh;
+    height: 100vh;
 }
 
 button:hover, .side-card:hover {
@@ -51,7 +51,7 @@ button:hover, .side-card:hover {
         margin-left: 7px;
         font-size: 24px;
         border: none;
-        display: flex;
+        display: none;
         justify-content: left;
         background: transparent;
         cursor: pointer;
@@ -62,10 +62,10 @@ button:hover, .side-card:hover {
         color: var(--color-primary-dark);
 }
 
-
 /* ================= SIDEBAR ================= */
 .sidebar {
     display: flex;
+    position: sticky;
     flex-direction: column;
     transition: var(--transition);
     min-width: 260px;
@@ -73,8 +73,9 @@ button:hover, .side-card:hover {
     backdrop-filter: blur(10px);
     border-right: 1px solid var(--color-border);
     padding: var(--space-lg) var(--space-md);
-    min-height: 100vh;
+    height: 600px;
     transform: translateX(0);
+    top: 0;
 }
 
 /* Logo */
@@ -147,40 +148,7 @@ button:hover, .side-card:hover {
 .logout:hover {
     background: var(--color-danger-light);
 }
-/* ================= MOBILE TOPBAR ================= */
-@media (max-width: 768px) {
 
-    .sidebar {
-        position: fixed;
-        transform: translateX(-100%);
-        width: 260px;
-        height: 100%;
-        background: white;
-        transition: var(--transition);
-        z-index: 1000;
-    }
-
-    .sidebar.active {
-        left: 0;
-        transform: translateX(0);
-    }
-
-    .main-wrapper {
-        margin-left: 0;
-        align-content: center;
-        padding: var(--space-sm);
-    }
-     .content-wrapper {
-        padding: var(--space-sm);
-    }
-
-    .cards {
-        gap: 10px;/* tighter cards */
-    }
-    .chart-card{
-        height:300px;
-    }
-}
 /* ================= MAIN ================= */
 .main-wrapper {
     flex: 1;
@@ -828,4 +796,41 @@ html {
 .main-wrapper {
     background: transparent;
     box-shadow: none;
+}
+
+/* ================= MOBILE TOPBAR ================= */
+@media (max-width: 768px) {
+
+    .sidebar {
+        position: fixed;
+        transform: translateX(-100%);
+        width: 260px;
+        height: 100%;
+        background: white;
+        transition: var(--transition);
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        left: 0;
+        transform: translateX(0);
+    }
+    .hamburger-btn{
+        display : flex;
+    }
+    .main-wrapper {
+        margin-left: 0;
+        align-content: center;
+        padding: var(--space-sm);
+    }
+     .content-wrapper {
+        padding: var(--space-sm);
+    }
+
+    .cards {
+        gap: 10px;/* tighter cards */
+    }
+    .chart-card{
+        height:300px;
+    }
 }
